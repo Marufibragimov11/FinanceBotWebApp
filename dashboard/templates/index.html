@@ -1,0 +1,143 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Finance Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}"/>
+</head>
+<body>
+<div class="app">
+    <!-- Header -->
+    <header class="app-header">
+        <div class="header-left">
+            <div class="avatar" aria-label="User Avatar">A</div>
+            <h1 class="app-title">Welcome back Steve</h1>
+        </div>
+        <div class="header-actions">
+            <button class="icon-button" aria-label="Search">
+                <span class="icon">🔍</span>
+            </button>
+            <button class="icon-button" aria-label="Notifications">
+                <span class="icon">🔔</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="content">
+        <!-- Balance Card -->
+        <section class="balance-card card">
+            <div class="balance-card__content">
+                <div class="balance-label">Current Balance</div>
+                <div id="balance-amount" class="balance-amount">${{ balance|floatformat:2 }}</div>
+            </div>
+            <button class="add-button" id="add-funds">+ Add</button>
+        </section>
+
+        <!-- Upcoming Payments -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Upcoming Payments</h2>
+                <button class="text-button" id="see-all-upcoming">See all</button>
+            </div>
+            <div id="upcoming-row" class="upcoming-row" aria-label="Upcoming payments"></div>
+        </section>
+
+        <!-- Activity Overview -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Activity Overview</h2>
+                <div class="filter-group" role="tablist">
+                    <button class="chip chip--active" data-filter="all" role="tab" aria-selected="true">All</button>
+                    <button class="chip" data-filter="income" role="tab" aria-selected="false">Income</button>
+                    <button class="chip" data-filter="expense" role="tab" aria-selected="false">Expenses</button>
+                </div>
+            </div>
+            <div class="activity-summary">
+                <div class="summary-item">
+                    <div class="summary-label">Income</div>
+                    <div id="summary-income" class="summary-value">${{ income|floatformat:2 }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Expenses</div>
+                    <div id="summary-expense" class="summary-value">${{ expenses|floatformat:2 }}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Balance</div>
+                    <div id="summary-balance" class="summary-value">${{ balance|floatformat:2 }}</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Chart -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Analytics</h2>
+            </div>
+            <div class="card chart-card">
+                <canvas id="donutChart" width="320" height="320" aria-label="Donut chart"></canvas>
+                <div id="chart-center" class="chart-center">
+                    <div class="center-value" id="chart-center-value">$0</div>
+                    <div class="center-label">Total</div>
+                </div>
+                <div id="legend" class="legend"></div>
+            </div>
+        </section>
+
+        <!-- Recent Transactions -->
+        <section class="section">
+            <div class="section-header">
+                <h2>Recent Transactions</h2>
+                <button class="text-button" id="see-all-transactions">See all</button>
+            </div>
+            <div id="transactions-list" class="list">
+                {% for transaction in recent_transactions %}
+                <div class="list-item">
+                    <div class="item-icon">{{ transaction.icon }}</div>
+                    <div class="item-content">
+                        <div class="item-title">{{ transaction.name }}</div>
+                        <div class="item-subtitle">{{ transaction.category }}</div>
+                    </div>
+                    <div class="item-amount {% if transaction.amount < 0 %}negative{% else %}positive{% endif %}">
+                        ${{ transaction.amount|floatformat:2 }}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="list-item">
+                    <div class="item-content">
+                        <div class="item-title">No transactions yet</div>
+                        <div class="item-subtitle">Add your first transaction to get started</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Action Button -->
+    <button class="fab" aria-label="Add Transaction" id="fab">+</button>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav" aria-label="Primary">
+        <button class="nav-item active" aria-label="Home">🏠</button>
+        <button class="nav-item" aria-label="Cards">💳</button>
+        <button class="nav-item" aria-label="Analytics">📊</button>
+        <button class="nav-item" aria-label="Profile">👤</button>
+    </nav>
+</div>
+
+<script>
+    // Pass analytics data from Django to JavaScript
+    window.analyticsData = {{ analytics_data|safe }};
+</script>
+<script src="{% static 'js/script.js' %}"></script>
+</body>
+<style></style>
+</html>
+
+
