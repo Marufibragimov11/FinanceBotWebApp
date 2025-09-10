@@ -175,13 +175,24 @@ function drawDonut(canvasId, data, options = {}) {
 }
 
 function main() {
-  // Balance + Summary
-  renderBalance(demoData.balance);
-  renderSummary(demoData.transactions);
+  // Balance + Summary - use real data from Django
+  const realBalance = parseFloat(document.getElementById('balance-amount').textContent.replace('$', '').replace(',', '')) || 0;
+  renderBalance(realBalance);
+  
+  if (window.transactionsData) {
+    renderSummary(window.transactionsData);
+  } else {
+    renderSummary(demoData.transactions);
+  }
 
-  // Upcoming + Transactions
+  // Upcoming + Transactions - use sample data for upcoming payments, real data for transactions
   renderUpcomingRow(demoData.upcomingPayments);
-  wireFilter(demoData.transactions);
+  
+  if (window.transactionsData) {
+    wireFilter(window.transactionsData);
+  } else {
+    wireFilter(demoData.transactions);
+  }
 
   // Chart - use real analytics data from Django
   if (window.analyticsData) {

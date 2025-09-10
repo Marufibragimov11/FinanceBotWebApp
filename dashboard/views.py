@@ -23,8 +23,8 @@ def main_dashboard(request):
     # Calculate current balance
     current_balance = total_income - total_expenses
 
-    # Get recent transactions (latest 5)
-    recent_transactions = Transaction.objects.all()[:5]
+    # Get recent transactions (latest 10)
+    recent_transactions = Transaction.objects.select_related('category').order_by('-date')[:10]
 
     # Prepare recent transactions data for template
     recent_transactions_data = []
